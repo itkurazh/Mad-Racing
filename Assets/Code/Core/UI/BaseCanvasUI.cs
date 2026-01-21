@@ -1,5 +1,4 @@
 using UnityEngine;
-using NaughtyAttributes;
 using UnityEngine.UI;
 
 public abstract class BaseCanvasUI : MonoBehaviour
