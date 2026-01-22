@@ -4,14 +4,19 @@ using UnityEngine;
 public sealed class Player : Entity
 {
     [SerializeField] private Unit _unit;
+    [SerializeField] private Vehicle _vehicle;
     
     public CameraController CameraController;
     
-    private PlayerConfig _config => Configs.Get<PlayerConfig>();
+    private UnitConfig UnitConfig => Configs.Get<UnitConfig>();
 
     private void Start()
     {
-        CameraController.SetTarget(_unit.Data.Controller.transform);
+        //CameraController.SetTarget(_unit.Data.Controller.transform);
+        //CameraController.ChangeState(CameraController.StateID.Character);
+        
+        CameraController.SetTarget(_vehicle.Data.Controller.transform);
+        CameraController.ChangeState(CameraController.StateID.Vehicle);
     }
 
     protected override void Subscribe()
@@ -26,14 +31,24 @@ public sealed class Player : Entity
 
     private void Update()
     {
-        Locomotion();
+        VehicleLocomotion();
+        //CharacterLocomotion();
     }
 
-    private void Locomotion()
+    private void VehicleLocomotion()
     {
-        var forward = Vector3.Cross(CameraController.LookAt.right, Vector3.up);
-        var right = Vector3.Cross(forward, Vector3.up);
-        var inputDirection = forward * Input.GetAxisRaw("Vertical") + 
+        _vehicle.Move(Input.GetAxis("Vertical"));
+        _vehicle.Rotate(Input.GetAxis("Horizontal"));
+        
+        if(Input.GetKey(KeyCode.Space))
+            _vehicle.Brake();
+    }
+
+    private void CharacterLocomotion()
+    {
+        var right = Vector3.Cross(CameraController.Direction, Vector3.up);
+        var forward = Vector3.Cross(right, Vector3.up);
+        var inputDirection = -forward * Input.GetAxisRaw("Vertical") + 
                                     -right * Input.GetAxisRaw("Horizontal");
         
         if(inputDirection == Vector3.zero)
@@ -44,12 +59,12 @@ public sealed class Player : Entity
         }
         else if (Input.GetKey(KeyCode.LeftShift))
         {
-            _unit.Data.Velocity = _config.RunSpeed;
+            _unit.Data.Velocity = UnitConfig.RunSpeed;
             _unit.Data.VelocityState = UnitData.VelocityStateID.Running;
         }
         else
         {
-            _unit.Data.Velocity = _config.WalkSpeed;
+            _unit.Data.Velocity = UnitConfig.WalkSpeed;
             _unit.Data.VelocityState = UnitData.VelocityStateID.Walking;
         }
         
