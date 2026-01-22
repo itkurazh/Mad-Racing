@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class Vehicle : Entity
+public partial class Vehicle : Entity
 {
     public VehicleData Data => _data;
     
@@ -10,6 +10,8 @@ public class Vehicle : Entity
     private VehicleData _data;
     
     private VehicleConfig _config => Configs.Get<VehicleConfig>();
+    
+    private Vector3 _lastPosition;
     
     protected override void Awake()
     {
@@ -31,31 +33,51 @@ public class Vehicle : Entity
 
     private void Update()
     {
-        _data.CurrentVelocity = Mathf.Lerp(_data.CurrentVelocity, _data.TargetVelocity, 5f * Time.deltaTime);
-        
-        _controller.Move(_controller.transform.forward * _data.CurrentVelocity);
+        _data.CurrentVelocity = Mathf.Lerp(_data.CurrentVelocity, _data.TargetVelocity, VehicleConstants.LERP_VALUE * Time.deltaTime);
         
         _data.Position = _controller.transform.position;
         _data.Rotation = _controller.transform.forward;
+        
+        float distance = Vector3.Distance(_data.Position, _lastPosition);
+        _data.RigidbodyVelocity = distance / Time.deltaTime;
+        _lastPosition = _data.Position;
     }
 
     public void Move(float direction)
     {
-        _data.AccelationTime = Mathf.Abs(direction);
-        _data.TargetVelocity = direction * GetSpeed();
+        if (direction != 0)
+        {
+            _data.AccelationTime += Time.deltaTime;
+
+            if (!direction.Equals(_data.InputDirection))
+                _data.AccelationTime = 0;
+            
+            _data.InputDirection = direction;
+        }
+        else
+        {
+            _data.AccelationTime -= Time.deltaTime;
+        }
+
+        _data.AccelationTime = Mathf.Clamp01(_data.AccelationTime);
+        _data.TargetVelocity = _data.InputDirection * GetSpeed();
+        
+        _controller.Move(_controller.transform.forward * _data.CurrentVelocity);
     }
 
     public void Rotate(float axis)
     {
+        _data.InputSide = axis;
         var lerpVelocity = Mathf.Abs(_data.CurrentVelocity) / (_config.LinearSpeed * _config.AccelerationMultiplier);
-        var angularSpeed = _config.AngularAcceleration.Evaluate(lerpVelocity) * _config.AngularSpeed * Mathf.Clamp(_data.CurrentVelocity, -1, 1);
+        _data.AngularVelocity = _config.AngularAcceleration.Evaluate(lerpVelocity) * _config.AngularSpeed * Mathf.Clamp(_data.CurrentVelocity, -1, 1);
         
-        _controller.Rotate(_controller.transform.up * (angularSpeed * axis));
+        _controller.Rotate(_controller.transform.up * (_data.AngularVelocity * _data.InputSide));
     }
 
     public void Brake()
     {
-        _data.TargetVelocity = 0;
+        _data.AccelationTime = 0;
+        //_data.TargetVelocity = 0;
     }
 
     private float GetSpeed()

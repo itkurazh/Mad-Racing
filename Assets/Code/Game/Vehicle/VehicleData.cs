@@ -42,9 +42,16 @@ public class VehicleData
         }
     }
 
+    public Vector3 CenterMass;
+
     public float AccelationTime;
     public float TargetVelocity;
     public float CurrentVelocity;
+    public float AngularVelocity;
+    public float RigidbodyVelocity;
+    
+    public float InputDirection;
+    public float InputSide;
     
     public enum Property : int
     {

@@ -37,7 +37,7 @@ public sealed class Player : Entity
 
     private void VehicleLocomotion()
     {
-        _vehicle.Move(Input.GetAxis("Vertical"));
+        _vehicle.Move(Input.GetAxisRaw("Vertical"));
         _vehicle.Rotate(Input.GetAxis("Horizontal"));
         
         if(Input.GetKey(KeyCode.Space))
@@ -72,6 +72,6 @@ public sealed class Player : Entity
         var position = _unit.Data.Position + moveDirection;
         
         _unit.Data.Controller.Move(position);
-        _unit.Data.Direction = Vector3.Lerp(_unit.Data.Direction, moveDirection, UnitConstans.LERP_VALUE * Time.deltaTime);
+        _unit.Data.Direction = Vector3.Lerp(_unit.Data.Direction, moveDirection, UnitConstants.LERP_VALUE * Time.deltaTime);
     }
 }

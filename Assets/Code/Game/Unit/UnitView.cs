@@ -37,20 +37,20 @@ public class UnitView : MonoBehaviour
         transform.position = Vector3.Lerp(
             transform.position, 
             _position, 
-            UnitConstans.LERP_VALUE * Time.deltaTime);
+            UnitConstants.LERP_VALUE * Time.deltaTime);
         
         if(_direction != Vector3.zero)
         {
             transform.rotation = Quaternion.Lerp(
                 transform.rotation,
                 Quaternion.LookRotation(_direction, Vector3.up),
-                UnitConstans.LERP_VALUE * Time.deltaTime);
+                UnitConstants.LERP_VALUE * Time.deltaTime);
         }
     }
 
     private void Velocity()
     {
-        float velocityFrom = _animator.GetFloat(UnitConstans.ANIMATOR_VELOCITY);
+        float velocityFrom = _animator.GetFloat(UnitConstants.ANIMATOR_VELOCITY);
         float velocityTo = 0;
         
         switch (_velocityID)
@@ -60,8 +60,8 @@ public class UnitView : MonoBehaviour
             case UnitData.VelocityStateID.Running: velocityTo = 1f; break;
         }
         
-        float lerp = Mathf.Lerp(velocityFrom, velocityTo, UnitConstans.LERP_VALUE *  Time.deltaTime);
-        _animator.SetFloat(UnitConstans.ANIMATOR_VELOCITY, lerp);
+        float lerp = Mathf.Lerp(velocityFrom, velocityTo, UnitConstants.LERP_VALUE *  Time.deltaTime);
+        _animator.SetFloat(UnitConstants.ANIMATOR_VELOCITY, lerp);
     }
 
     private void OnChangedProperty(UnitData.Property property, Object value)

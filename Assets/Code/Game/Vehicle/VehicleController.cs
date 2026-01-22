@@ -10,13 +10,14 @@ public class VehicleController : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
 
-    public void Move(Vector3 position)
+    public void Move(Vector3 velocity)
     {
-        _rigidbody.linearVelocity = position;
+        _rigidbody.linearVelocity = velocity;
+        _rigidbody.linearVelocity += -transform.right * _rigidbody.angularVelocity.y;
     }
     
-    public void Rotate(Vector3 rotation)
+    public void Rotate(Vector3 velocity)
     {
-        _rigidbody.angularVelocity = rotation;
+        _rigidbody.angularVelocity = velocity;
     }
 }
