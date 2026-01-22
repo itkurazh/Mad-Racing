@@ -1,7 +1,11 @@
-﻿namespace Code.Game.Unit
+﻿using UnityEngine;
+
+public class UnitController : MonoBehaviour
 {
-    public class UnitController
+    public Vector3 Position => transform.position;
+    
+    public void Move(Vector3 position)
     {
-        
+        transform.position = position;
     }
 }

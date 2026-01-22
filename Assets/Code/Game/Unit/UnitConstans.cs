@@ -1,7 +1,6 @@
-﻿namespace Code.Game.Unit
+﻿public sealed class UnitConstans
 {
-    public class UnitConstans
-    {
-        
-    }
+    public const string ANIMATOR_VELOCITY = "Velocity";
+    
+    public const int LERP_VALUE = 15;
 }
