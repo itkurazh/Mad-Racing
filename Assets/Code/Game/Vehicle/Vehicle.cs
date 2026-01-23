@@ -10,8 +10,6 @@ public partial class Vehicle : Entity
     private VehicleData _data;
     
     private VehicleConfig _config => Configs.Get<VehicleConfig>();
-
-    public float Speed;
     
     protected override void Awake()
     {
@@ -35,6 +33,7 @@ public partial class Vehicle : Entity
     {
         var dot = Vector3.Dot(_data.Direction, _controller.transform.forward);
         
+        _data.LerpVelocity = Mathf.Abs(_data.CurrentVelocity) / (_config.MaximumSpeed * _config.AccelerationMultiplier);
         _data.Position = _controller.transform.position;
         _data.Rotation = _controller.transform.forward;
         
@@ -57,25 +56,28 @@ public partial class Vehicle : Entity
             _data.AccelationTime = Mathf.Lerp(_data.AccelationTime, 0f, _config.Traction * Time.deltaTime);
         }
 
-        var dot = Vector3.Dot(_data.Direction, _controller.transform.forward);
+        _data.DirectionDot = Vector3.Dot(_data.Direction, _controller.transform.forward);
         
         _data.AccelationTime = Mathf.Clamp(_data.AccelationTime, 0f, 5f);
         _data.TargetVelocity = _data.InputDirection * GetSpeed();
-        _data.TargetVelocity = Mathf.Clamp(_data.TargetVelocity * dot, -_config.MaximumSpeed, _config.MaximumSpeed);
-        _data.CurrentVelocity = Mathf.Lerp(_data.CurrentVelocity, _data.TargetVelocity, dot);
+        _data.TargetVelocity = Mathf.Clamp(_data.TargetVelocity * _data.DirectionDot, -_config.MaximumSpeed, _config.MaximumSpeed);
+        _data.CurrentVelocity = Mathf.Lerp(_data.CurrentVelocity, _data.TargetVelocity, _data.DirectionDot);
         
-        _data.Direction = Vector3.Lerp(_data.Direction, _controller.transform.forward, _config.Traction * Time.deltaTime);
+        _data.Traction = _data.IsBrake ? 1f : _config.Traction;
+        
+        _data.Direction = Vector3.Lerp(_data.Direction, _controller.transform.forward, _data.Traction * Time.deltaTime);
         
         _controller.Move(_data.Direction * _data.CurrentVelocity);
-        
-        Speed = _data.CurrentVelocity;
     }
 
     public void Rotate(float axis)
     {
         _data.InputSide = axis;
-        var lerpVelocity = Mathf.Abs(_data.CurrentVelocity) / (_config.MaximumSpeed * _config.AccelerationMultiplier);
-        _data.AngularVelocity = _config.AngularAcceleration.Evaluate(lerpVelocity) * _config.AngularSpeed * Mathf.Clamp(_data.CurrentVelocity, -1, 1);
+        
+        var force = _config.AngularAcceleration.Evaluate(_data.LerpVelocity) * _config.AngularSpeed * Mathf.Clamp(_data.CurrentVelocity, -1, 1);
+        force *= _data.IsBrake ? 5f * (1f - _data.DirectionDot) : 1;
+        
+        _data.AngularVelocity = Mathf.Lerp(_data.AngularVelocity, force, _data.Traction * Time.deltaTime);
         
         _controller.Rotate(_controller.transform.up * (_data.AngularVelocity * _data.InputSide));
     }

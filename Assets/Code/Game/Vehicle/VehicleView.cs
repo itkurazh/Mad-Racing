@@ -4,10 +4,17 @@ using Object = System.Object;
 
 public class VehicleView : MonoBehaviour
 {
+    [Header("Suspension")]
     [SerializeField] private Transform _root;
     [SerializeField] private Transform _pivotForward;
     [SerializeField] private Transform _pivotSide;
+    
+    [Header("Wheels")]
     [SerializeField] private Transform[] _wheels;
+    
+    [Header("Effect")]
+    [SerializeField] private ParticleSystem[] _effectsSmoke;
+    [SerializeField] private ParticleSystem[] _effectsTrailVFX;
     
     private VehicleData _data;
     
@@ -17,6 +24,8 @@ public class VehicleView : MonoBehaviour
     private Quaternion _rotation;
     private float _massVelocity;
     private float _lerpVelocity;
+
+    public float Output;
     
     public void SetData(VehicleData data)
     {
@@ -78,6 +87,11 @@ public class VehicleView : MonoBehaviour
             _pivotForward.localRotation = Quaternion.Lerp(_pivotForward.localRotation, forwardRotation,
                 VehicleConstants.LERP_VALUE * Time.deltaTime);
         }
+        
+        {
+            var forceRoot = Vector3.forward * (_data.LerpVelocity * -_massDirection.z); 
+            _root.localPosition = Vector3.Lerp(_root.localPosition, forceRoot, VehicleConstants.LERP_VALUE * Time.deltaTime);
+        }
     }
 
     public void WheelsControl()
@@ -92,12 +106,40 @@ public class VehicleView : MonoBehaviour
                     _wheels[i].localRotation,
                     Quaternion.Euler(rotation),
                     VehicleConstants.LERP_VALUE * Time.deltaTime);
-
+            }
+            else
+            {
                 var wVelocity = Mathf.Max(Mathf.Abs(_data.CurrentVelocity), _massVelocity);
                 _wheels[i].GetChild(0).Rotate(Vector3.right, _data.InputDirection * wVelocity * VehicleConstants.VIEW_WHEEL_RAD);
             }
             
             _wheels[i].GetChild(0).Rotate(Vector3.right, _massDirection.z * _massVelocity * VehicleConstants.VIEW_WHEEL_RAD);
         }
+        
+        Output = _massVelocity - _data.CurrentVelocity;
+        
+        if(Mathf.Abs(_massDirection.x) * _massVelocity > 0.2f && _data.CurrentVelocity > 1)
+        {
+            if(!_effectsTrailVFX[0].isPlaying)
+                _effectsTrailVFX.Play();
+        }
+        else
+        {
+            if(_effectsTrailVFX[0].isPlaying)
+                _effectsTrailVFX.Stop();
+        }
+        
+        if(_data.CurrentVelocity > _massVelocity && _data.CurrentVelocity > 1)
+        {
+            if(!_effectsSmoke[0].isPlaying)
+                _effectsSmoke.Play();
+        }
+        else
+        {
+            if(_effectsSmoke[0].isPlaying)
+                _effectsSmoke.Stop();
+        }
+        
+        //print($"Mass: {_massVelocity} && {_data.CurrentVelocity}");
     }
 }

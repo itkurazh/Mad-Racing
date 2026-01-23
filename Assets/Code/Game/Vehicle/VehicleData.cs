@@ -33,10 +33,12 @@ public class VehicleData
     
     public Vector3 Direction;
 
+    public float DirectionDot;
     public float AccelationTime;
     public float TargetVelocity;
     public float CurrentVelocity;
     public float AngularVelocity;
+    public float LerpVelocity;
     
     public float InputDirection;
     public float InputSide;
