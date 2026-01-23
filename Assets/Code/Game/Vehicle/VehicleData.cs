@@ -31,32 +31,21 @@ public class VehicleData
         }
     }
     
-    private Vector3 _direction;
-    public Vector3 Direction
-    {
-        get => _direction;
-        set
-        {
-            _direction = value;
-            OnChangedProperty?.Invoke(Property.Direction, _direction);
-        }
-    }
-
-    public Vector3 CenterMass;
+    public Vector3 Direction;
 
     public float AccelationTime;
     public float TargetVelocity;
     public float CurrentVelocity;
     public float AngularVelocity;
-    public float RigidbodyVelocity;
     
     public float InputDirection;
     public float InputSide;
+    
+    public bool IsBrake;
     
     public enum Property : int
     {
         Position = 1,
         Rotation = 2,
-        Direction = 3,
     }
 }

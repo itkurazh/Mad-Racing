@@ -5,13 +5,18 @@ using Object = System.Object;
 public class VehicleView : MonoBehaviour
 {
     [SerializeField] private Transform _root;
-    [SerializeField] private Transform _pivot;
+    [SerializeField] private Transform _pivotForward;
+    [SerializeField] private Transform _pivotSide;
     [SerializeField] private Transform[] _wheels;
     
     private VehicleData _data;
     
     private Vector3 _position;
+    private Vector3 _lastPosition;
+    private Vector3 _massDirection;
     private Quaternion _rotation;
+    private float _massVelocity;
+    private float _lerpVelocity;
     
     public void SetData(VehicleData data)
     {
@@ -31,6 +36,12 @@ public class VehicleView : MonoBehaviour
     {
         transform.position = Vector3.Lerp(transform.position, _position, VehicleConstants.LERP_VALUE * Time.deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, _rotation, VehicleConstants.LERP_VALUE * Time.deltaTime);
+        
+        _massDirection = transform.InverseTransformVector(transform.position - _lastPosition).normalized;
+        float distance = Vector3.Distance(transform.position, _lastPosition);
+        _massVelocity = distance / Time.deltaTime;
+        _lastPosition = transform.position;
+        _lerpVelocity = Mathf.Lerp(_lerpVelocity, _massVelocity, VehicleConstants.LERP_VALUE * Time.deltaTime);
 
         WheelsControl();
         Suspension();
@@ -47,8 +58,26 @@ public class VehicleView : MonoBehaviour
 
     private void Suspension()
     {
-        _root.localRotation = Quaternion.Euler(Vector3.forward * 2 * _data.InputSide);
-        _pivot.localRotation = Quaternion.Euler(Vector3.left * 2 * _data.InputDirection);
+        {
+            var sideValue = Mathf.Clamp(_massVelocity * _massDirection.x, -VehicleConstants.VIEW_SIDE_MAX, VehicleConstants.VIEW_SIDE_MAX);
+            sideValue *= VehicleConstants.VIEW_SIDE_POWER;
+
+            var sideRotation = Quaternion.Euler(Vector3.back * sideValue);
+            _pivotSide.localRotation = Quaternion.Lerp(_pivotSide.localRotation, sideRotation,
+                VehicleConstants.LERP_VALUE * Time.deltaTime);
+
+            var sideLerpPos = Mathf.Lerp(0, 0.1f, sideValue / VehicleConstants.VIEW_SIDE_MAX);
+            _pivotSide.localPosition = Vector3.Lerp(_pivotSide.localPosition, Vector3.down * sideLerpPos, VehicleConstants.LERP_VALUE * Time.deltaTime);
+        }
+
+        {
+            var forwardValue = Mathf.Clamp(_massVelocity - _lerpVelocity, -VehicleConstants.VIEW_FORWARD_MAX, VehicleConstants.VIEW_FORWARD_MAX);
+            forwardValue *= VehicleConstants.VIEW_FORWARD_POWER;
+
+            var forwardRotation = Quaternion.Euler(Vector3.left * forwardValue);
+            _pivotForward.localRotation = Quaternion.Lerp(_pivotForward.localRotation, forwardRotation,
+                VehicleConstants.LERP_VALUE * Time.deltaTime);
+        }
     }
 
     public void WheelsControl()
@@ -63,13 +92,12 @@ public class VehicleView : MonoBehaviour
                     _wheels[i].localRotation,
                     Quaternion.Euler(rotation),
                     VehicleConstants.LERP_VALUE * Time.deltaTime);
-                
-                _wheels[i].GetChild(0).Rotate(Vector3.right, _data.InputDirection * _data.CurrentVelocity);
+
+                var wVelocity = Mathf.Max(Mathf.Abs(_data.CurrentVelocity), _massVelocity);
+                _wheels[i].GetChild(0).Rotate(Vector3.right, _data.InputDirection * wVelocity * VehicleConstants.VIEW_WHEEL_RAD);
             }
-            else
-            {
-                _wheels[i].GetChild(0).Rotate(Vector3.right, _data.RigidbodyVelocity);
-            }
+            
+            _wheels[i].GetChild(0).Rotate(Vector3.right, _massDirection.z * _massVelocity * VehicleConstants.VIEW_WHEEL_RAD);
         }
     }
 }

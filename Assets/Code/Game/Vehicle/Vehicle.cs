@@ -11,8 +11,6 @@ public partial class Vehicle : Entity
     
     private VehicleConfig _config => Configs.Get<VehicleConfig>();
     
-    private Vector3 _lastPosition;
-    
     protected override void Awake()
     {
         _data = new VehicleData();
@@ -37,10 +35,6 @@ public partial class Vehicle : Entity
         
         _data.Position = _controller.transform.position;
         _data.Rotation = _controller.transform.forward;
-        
-        float distance = Vector3.Distance(_data.Position, _lastPosition);
-        _data.RigidbodyVelocity = distance / Time.deltaTime;
-        _lastPosition = _data.Position;
     }
 
     public void Move(float direction)
@@ -62,7 +56,9 @@ public partial class Vehicle : Entity
         _data.AccelationTime = Mathf.Clamp01(_data.AccelationTime);
         _data.TargetVelocity = _data.InputDirection * GetSpeed();
         
-        _controller.Move(_controller.transform.forward * _data.CurrentVelocity);
+        _data.Direction = Vector3.Lerp(_data.Direction, _controller.transform.forward, VehicleConstants.LERP_VALUE * Time.deltaTime);
+        
+        _controller.Move(_data.Direction * _data.CurrentVelocity);
     }
 
     public void Rotate(float axis)
@@ -74,10 +70,15 @@ public partial class Vehicle : Entity
         _controller.Rotate(_controller.transform.up * (_data.AngularVelocity * _data.InputSide));
     }
 
-    public void Brake()
+    public void Brake(bool activeSelf)
     {
-        _data.AccelationTime = 0;
-        //_data.TargetVelocity = 0;
+        _data.IsBrake = activeSelf;
+        
+        if(activeSelf)
+        {
+            _data.AccelationTime = Mathf.Lerp(_data.AccelationTime, 0f, 3f * Time.deltaTime);
+            _controller.AdditiveSide();
+        }
     }
 
     private float GetSpeed()

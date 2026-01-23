@@ -39,9 +39,7 @@ public sealed class Player : Entity
     {
         _vehicle.Move(Input.GetAxisRaw("Vertical"));
         _vehicle.Rotate(Input.GetAxis("Horizontal"));
-        
-        if(Input.GetKey(KeyCode.Space))
-            _vehicle.Brake();
+        _vehicle.Brake(Input.GetKey(KeyCode.Space));
     }
 
     private void CharacterLocomotion()

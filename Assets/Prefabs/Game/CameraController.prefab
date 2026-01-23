@@ -144,7 +144,7 @@ MonoBehaviour:
   IgnoreTimeScale: 0
   WorldUpOverride: {fileID: 0}
   ChannelMask: -1
-  UpdateMethod: 2
+  UpdateMethod: 3
   BlendUpdateMethod: 1
   LensModeOverride:
     Enabled: 0
@@ -312,7 +312,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 40
+    FieldOfView: 35
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -344,10 +344,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
   Damping: {x: 0.1, y: 0.5, z: 0.3}
-  ShoulderOffset: {x: 0.5, y: 5, z: 0}
+  ShoulderOffset: {x: 0.5, y: 3, z: 0}
   VerticalArmLength: 0.4
   CameraSide: 0.5
-  CameraDistance: 5
+  CameraDistance: 7
   AvoidObstacles:
     Enabled: 0
     CollisionFilter:
@@ -373,18 +373,18 @@ MonoBehaviour:
     ScreenPosition: {x: 0, y: 0}
     DeadZone:
       Enabled: 0
-      Size: {x: 0.2, y: 0.2}
+      Size: {x: 0.05, y: 0.05}
     HardLimits:
       Enabled: 0
-      Size: {x: 0.8, y: 0.8}
+      Size: {x: 0.2, y: 0.2}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
-  TargetOffset: {x: 0, y: 0, z: 2.76}
-  Damping: {x: 0, y: 0}
+  TargetOffset: {x: 0, y: 0, z: 3}
+  Damping: {x: 0.3, y: 0.3}
   Lookahead:
     Enabled: 1
-    Time: 0
-    Smoothing: 0
+    Time: 0.1
+    Smoothing: 1
     IgnoreY: 0
 --- !u!1 &8844146008882277042
 GameObject:
