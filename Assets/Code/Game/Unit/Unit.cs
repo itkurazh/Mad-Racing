@@ -4,6 +4,7 @@ using UnityEngine;
 public class Unit : Entity
 {
     public UnitData Data => _data;
+    public UnitView View => _view;
     
     [SerializeField] private UnitView _view;
     [SerializeField] private UnitController _controller;

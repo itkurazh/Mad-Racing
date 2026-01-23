@@ -18,4 +18,16 @@ public class GameContext : ICoreSystem
     {
         
     }
+    
+    public bool TryEnterVehicle(Player player, Vehicle vehicle)
+    {
+        player.SwitchState(PlayerModeID.Vehicle);
+        return true;
+    }
+
+    public bool TryExitVehicle(Player player, Vehicle vehicle)
+    {
+        player.SwitchState(PlayerModeID.Character);
+        return true;
+    }
 }

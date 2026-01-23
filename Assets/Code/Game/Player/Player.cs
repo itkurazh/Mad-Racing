@@ -7,16 +7,17 @@ public sealed class Player : Entity
     [SerializeField] private Vehicle _vehicle;
     
     public CameraController CameraController;
+
+    private PlayerModeID _modeID;
     
     private UnitConfig UnitConfig => Configs.Get<UnitConfig>();
 
     private void Start()
     {
-        //CameraController.SetTarget(_unit.Data.Controller.transform);
-        //CameraController.ChangeState(CameraController.StateID.Character);
+        SwitchState(PlayerModeID.Character);
         
-        CameraController.SetTarget(_vehicle.Data.Controller.transform);
-        CameraController.ChangeState(CameraController.StateID.Vehicle);
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     protected override void Subscribe()
@@ -31,8 +32,43 @@ public sealed class Player : Entity
 
     private void Update()
     {
-        VehicleLocomotion();
-        //CharacterLocomotion();
+        switch (_modeID)
+        {
+            case PlayerModeID.Character: CharacterLocomotion(); break;
+            case PlayerModeID.Vehicle: VehicleLocomotion(); break;
+        }
+        
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            if(_modeID == PlayerModeID.Character)
+                Services.Game.Context.TryEnterVehicle(this, _vehicle);
+            else
+                Services.Game.Context.TryExitVehicle(this, _vehicle);
+        }
+    }
+
+    public void SwitchState(PlayerModeID modeID)
+    {
+        switch (modeID)
+        {
+            case PlayerModeID.Character:
+                CameraController.SetTarget(_unit.Data.Controller.transform);
+                CameraController.ChangeState(CameraController.StateID.Character);
+                
+                _unit.gameObject.SetActive(true);
+                _unit.Data.Controller.transform.position = _vehicle.Data.Position + -_vehicle.Data.Controller.transform.right;
+                _unit.View.transform.position = _unit.Data.Controller.transform.position;
+                break;
+            
+            case PlayerModeID.Vehicle:
+                CameraController.SetTarget(_vehicle.Data.Controller.transform);
+                CameraController.ChangeState(CameraController.StateID.Vehicle);
+                
+                _unit.gameObject.SetActive(false);
+                break;
+        }
+        
+        _modeID = modeID;
     }
 
     private void VehicleLocomotion()
