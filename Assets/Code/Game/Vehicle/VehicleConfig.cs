@@ -5,8 +5,10 @@ public class VehicleConfig : Config
 {
     public AnimationCurve Acceleration;
     public float AccelerationMultiplier;
-    public float LinearSpeed = 7;
+    public float MaximumSpeed = 7;
     
     public AnimationCurve AngularAcceleration;
     public float AngularSpeed = 7;
+
+    public int Traction;
 }

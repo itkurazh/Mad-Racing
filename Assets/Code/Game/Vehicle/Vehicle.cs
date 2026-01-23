@@ -10,6 +10,8 @@ public partial class Vehicle : Entity
     private VehicleData _data;
     
     private VehicleConfig _config => Configs.Get<VehicleConfig>();
+
+    public float Speed;
     
     protected override void Awake()
     {
@@ -31,10 +33,12 @@ public partial class Vehicle : Entity
 
     private void Update()
     {
-        _data.CurrentVelocity = Mathf.Lerp(_data.CurrentVelocity, _data.TargetVelocity, VehicleConstants.LERP_VALUE * Time.deltaTime);
+        var dot = Vector3.Dot(_data.Direction, _controller.transform.forward);
         
         _data.Position = _controller.transform.position;
         _data.Rotation = _controller.transform.forward;
+        
+        Debug();
     }
 
     public void Move(float direction)
@@ -50,21 +54,27 @@ public partial class Vehicle : Entity
         }
         else
         {
-            _data.AccelationTime -= Time.deltaTime;
+            _data.AccelationTime = Mathf.Lerp(_data.AccelationTime, 0f, _config.Traction * Time.deltaTime);
         }
 
-        _data.AccelationTime = Mathf.Clamp01(_data.AccelationTime);
-        _data.TargetVelocity = _data.InputDirection * GetSpeed();
+        var dot = Vector3.Dot(_data.Direction, _controller.transform.forward);
         
-        _data.Direction = Vector3.Lerp(_data.Direction, _controller.transform.forward, VehicleConstants.LERP_VALUE * Time.deltaTime);
+        _data.AccelationTime = Mathf.Clamp(_data.AccelationTime, 0f, 5f);
+        _data.TargetVelocity = _data.InputDirection * GetSpeed();
+        _data.TargetVelocity = Mathf.Clamp(_data.TargetVelocity * dot, -_config.MaximumSpeed, _config.MaximumSpeed);
+        _data.CurrentVelocity = Mathf.Lerp(_data.CurrentVelocity, _data.TargetVelocity, dot);
+        
+        _data.Direction = Vector3.Lerp(_data.Direction, _controller.transform.forward, _config.Traction * Time.deltaTime);
         
         _controller.Move(_data.Direction * _data.CurrentVelocity);
+        
+        Speed = _data.CurrentVelocity;
     }
 
     public void Rotate(float axis)
     {
         _data.InputSide = axis;
-        var lerpVelocity = Mathf.Abs(_data.CurrentVelocity) / (_config.LinearSpeed * _config.AccelerationMultiplier);
+        var lerpVelocity = Mathf.Abs(_data.CurrentVelocity) / (_config.MaximumSpeed * _config.AccelerationMultiplier);
         _data.AngularVelocity = _config.AngularAcceleration.Evaluate(lerpVelocity) * _config.AngularSpeed * Mathf.Clamp(_data.CurrentVelocity, -1, 1);
         
         _controller.Rotate(_controller.transform.up * (_data.AngularVelocity * _data.InputSide));
@@ -83,7 +93,7 @@ public partial class Vehicle : Entity
 
     private float GetSpeed()
     {
-        return _config.LinearSpeed * (_config.AccelerationMultiplier * GetAcceleration(_data.AccelationTime));
+        return _config.MaximumSpeed * (_config.AccelerationMultiplier * GetAcceleration(_data.AccelationTime));
     }
     
     private float GetAcceleration(float evaluate)

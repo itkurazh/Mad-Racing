@@ -40,6 +40,8 @@ public class VehicleData
     
     public float InputDirection;
     public float InputSide;
+
+    public float Traction;
     
     public bool IsBrake;
     
