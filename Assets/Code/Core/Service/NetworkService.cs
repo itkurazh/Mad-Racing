@@ -6,10 +6,14 @@ public interface INetworkService
 {
     bool StartClient();
     bool StartHost();
+    void EnterToVehicle(ulong clientId, Vehicle vehicle);
+    void ExitToVehicle(Vehicle vehicle);
 }
 
 public class NetworkService : MonoBehaviour, INetworkService
 {
+    public const ulong UNKNOWD_ID = 4004;
+    
     public static INetworkService Instance { get; private set; }
 
     private NetworkManager _network => NetworkManager.Singleton;
@@ -52,6 +56,16 @@ public class NetworkService : MonoBehaviour, INetworkService
         _network.OnClientConnectedCallback -= OnOnClientConnectedCallback;
         
         _network.Shutdown();
+    }
+
+    public void EnterToVehicle(ulong clientId, Vehicle vehicle)
+    {
+        vehicle.Network.ChangeOwnership(clientId);
+    }
+    
+    public void ExitToVehicle(Vehicle vehicle)
+    {
+        vehicle.Network.ChangeOwnership(0);
     }
 
     private void OnOnClientConnectedCallback(ulong clientId)

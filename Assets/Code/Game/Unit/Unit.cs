@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class Unit : Entity
+public class Unit : MonoBehaviour
 {
     public UnitData Data => _data;
     public UnitView View => _view;
@@ -10,7 +10,7 @@ public class Unit : Entity
     [SerializeField] private UnitController _controller;
     private UnitData _data;
 
-    protected override void Awake()
+    protected void Awake()
     {
         _data = new UnitData();
         _data.Controller = _controller;
@@ -21,15 +21,5 @@ public class Unit : Entity
     private void Update()
     {
         Data.Position = Data.Controller.Position;
-    }
-
-    protected override void Subscribe()
-    {
-        
-    }
-
-    protected override void Unsubscribe()
-    {
-       
     }
 }

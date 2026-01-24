@@ -4,6 +4,9 @@ using UnityEngine;
 
 public abstract class Entity :  NetworkBehaviour
 {
+    private NetworkObject _network;
+    public NetworkObject Network => GetNetwork();
+    
     protected virtual void Awake()
     {
         Subscribe();
@@ -15,5 +18,13 @@ public abstract class Entity :  NetworkBehaviour
     public override void OnDestroy()
     {
         Unsubscribe();
+    }
+    
+    private NetworkObject GetNetwork()
+    {
+        if(!_network)
+            _network = GetComponent<NetworkObject>();
+        
+        return _network;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 
 public partial class Vehicle : Entity
@@ -15,10 +16,13 @@ public partial class Vehicle : Entity
     {
         _data = new VehicleData();
         _data.Controller = _controller;
+        _data.Controller.Init(this);
+        _data.Position = _controller.transform.position;
+        _data.Rotation = _controller.transform.forward;
         
         _view.SetData(_data);
     }
-    
+
     protected override void Subscribe()
     {
         
@@ -31,13 +35,24 @@ public partial class Vehicle : Entity
 
     private void Update()
     {
-        var dot = Vector3.Dot(_data.Direction, _controller.transform.forward);
-        
-        _data.LerpVelocity = Mathf.Abs(_data.CurrentVelocity) / (_config.MaximumSpeed * _config.AccelerationMultiplier);
-        _data.Position = _controller.transform.position;
-        _data.Rotation = _controller.transform.forward;
-        
         Debug();
+        
+        if(!Network.IsSpawned)
+            return;
+        
+        if (!Network.IsOwner)
+        {
+            _data.Controller.transform.position = _data.Position;
+            _data.Controller.transform.rotation = Quaternion.LookRotation(_data.Rotation);
+        }
+        else
+        {
+            _data.LerpVelocity = Mathf.Abs(_data.CurrentVelocity) / (_config.MaximumSpeed * _config.AccelerationMultiplier);
+            _data.Position = _controller.transform.position;
+            _data.Rotation = _controller.transform.forward;
+            
+            UpdateDataRpc(_data);
+        }
     }
 
     public void Move(float direction)
@@ -101,5 +116,14 @@ public partial class Vehicle : Entity
     private float GetAcceleration(float evaluate)
     {
         return _config.Acceleration.Evaluate(evaluate);
+    }
+    
+    [Rpc(SendTo.NotOwner)]
+    private void UpdateDataRpc(VehicleData data)
+    {
+        Data.Position = data.Position;
+        Data.Rotation = data.Rotation;
+        Data.CurrentVelocity = data.CurrentVelocity;
+        Data.LerpVelocity = data.LerpVelocity;
     }
 }

@@ -1,19 +1,25 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
 public sealed class Player : Entity
 {
-    private NetworkObject _network;
-    public NetworkObject Network => GetNetwork();
+    public Unit Unit => _unit;
 
     [SerializeField] private Unit _unit;
     [SerializeField] private Vehicle _vehicle;
-
-    private PlayerModeID _modeID;
+    
+    private SphereCollider _triggerCollider;
+    private List<Vehicle> _vehicles = new();
     
     private UnitConfig UnitConfig => Configs.Get<UnitConfig>();
+
+    protected override void Awake()
+    {
+        _triggerCollider =  GetComponent<SphereCollider>();
+    }
     
     private async void Start()
     {
@@ -24,11 +30,13 @@ public sealed class Player : Entity
         {
             Services.Game.Context.CreateCamera();
             
-            SwitchState(PlayerModeID.Character);
+            SwitchState(UnitData.ModeID.Character);
             
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
+        
+        _triggerCollider.enabled = Network.IsOwner;
     }
 
     protected override void Subscribe()
@@ -45,43 +53,95 @@ public sealed class Player : Entity
     {
         if (!Network.IsOwner)
         {
+            if(Vector3.Distance(_unit.Data.Controller.transform.position , _unit.Data.Position) > 1f)
+                _unit.View.transform.position = _unit.Data.Position;
+            
             _unit.Data.Controller.transform.position = _unit.Data.Position;
-            _unit.View.transform.rotation = Quaternion.LookRotation(_unit.Data.Direction);
+            
+            if(_unit.Data.Direction != Vector3.zero)
+                _unit.View.transform.rotation = Quaternion.LookRotation(_unit.Data.Direction);
+            
+            _unit.View.gameObject.SetActive(_unit.Data.Mode == UnitData.ModeID.Character);
         }
         else
         {
-            switch (_modeID)
+            switch (_unit.Data.Mode)
             {
-                case PlayerModeID.Character: CharacterLocomotion(); break;
-                case PlayerModeID.Vehicle: VehicleLocomotion(); break;
+                case UnitData.ModeID.Character: CharacterLocomotion(); break;
+                case UnitData.ModeID.Vehicle: VehicleLocomotion(); break;
             }
 
             if (Input.GetKeyDown(KeyCode.E))
             {
-                if (_modeID == PlayerModeID.Character)
-                    Services.Game.Context.TryEnterVehicle(this, _vehicle);
+                if (!_vehicle)
+                {
+                    if(_vehicles.Count > 0)
+                    {
+                        var targetVehicle = _vehicles[0];
+                        
+                        EnterToVehicleRpc(Network.OwnerClientId, targetVehicle.Network.NetworkObjectId);
+                            
+                        _vehicle = targetVehicle;
+                        SwitchState(UnitData.ModeID.Vehicle);
+                    }
+                }
                 else
-                    Services.Game.Context.TryExitVehicle(this, _vehicle);
+                {
+                    _unit.Data.Controller.transform.position = _vehicle.Data.Position + -_vehicle.Data.Controller.transform.right;
+                    _unit.Data.Direction = _vehicle.Data.Controller.transform.forward;
+                    
+                    _unit.View.transform.position = _unit.Data.Controller.transform.position;
+    
+                    ExitToVehicleRpc(_vehicle.Network.NetworkObjectId);
+                    
+                    _vehicle = null;
+                    
+                    SwitchState(UnitData.ModeID.Character);
+                }
             }
+            
+            _triggerCollider.center = _unit.Data.Position;
             
             UpdateDataRpc(_unit.Data);
         }
     }
 
-    public void SwitchState(PlayerModeID modeID)
+    [Rpc(SendTo.Server)]
+    private void EnterToVehicleRpc(ulong clientId, ulong vehicleId)
+    {
+        Services.Game.Context.EnterToVehicle(clientId, vehicleId);
+    }
+    
+    [Rpc(SendTo.Server)]
+    private void ExitToVehicleRpc(ulong vehicleId)
+    {
+        Services.Game.Context.ExitToVehicle(vehicleId);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.TryGetComponent(out VehicleController controller) && !_vehicles.Contains(controller.Vehicle))
+            _vehicles.Add(controller.Vehicle);
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.TryGetComponent(out VehicleController controller) && _vehicles.Contains(controller.Vehicle))
+            _vehicles.Remove(controller.Vehicle);
+    }
+
+    public void SwitchState(UnitData.ModeID modeID)
     {
         switch (modeID)
         {
-            case PlayerModeID.Character:
+            case UnitData.ModeID.Character:
                 Services.Game.Context.Camera.SetTarget(_unit.Data.Controller.transform);
                 Services.Game.Context.Camera.ChangeState(CameraController.StateID.Character);
                 
                 _unit.gameObject.SetActive(true);
-                //_unit.Data.Controller.transform.position = _vehicle.Data.Position + -_vehicle.Data.Controller.transform.right;
-                //_unit.View.transform.position = _unit.Data.Controller.transform.position;
                 break;
             
-            case PlayerModeID.Vehicle:
+            case UnitData.ModeID.Vehicle:
                 Services.Game.Context.Camera.SetTarget(_vehicle.Data.Controller.transform);
                 Services.Game.Context.Camera.ChangeState(CameraController.StateID.Vehicle);
                 
@@ -89,7 +149,7 @@ public sealed class Player : Entity
                 break;
         }
         
-        _modeID = modeID;
+        _unit.Data.Mode = modeID;
     }
 
     private void VehicleLocomotion()
@@ -128,14 +188,6 @@ public sealed class Player : Entity
         _unit.Data.Controller.Move(moveDirection);
         _unit.Data.Direction = Vector3.Lerp(_unit.Data.Direction, moveDirection, UnitConstants.LERP_VALUE * Time.deltaTime);
     }
-
-    private NetworkObject GetNetwork()
-    {
-        if(!_network)
-            _network = GetComponent<NetworkObject>();
-        
-        return _network;
-    }
     
     [Rpc(SendTo.NotOwner)]
     private void UpdateDataRpc(UnitData data)
@@ -143,5 +195,6 @@ public sealed class Player : Entity
         _unit.Data.Position = data.Position;
         _unit.Data.Direction = data.Direction;
         _unit.Data.VelocityState = data.VelocityState;
+        _unit.Data.Mode = data.Mode;
     }
 }

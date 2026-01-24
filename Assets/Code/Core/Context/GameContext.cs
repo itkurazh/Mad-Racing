@@ -10,6 +10,8 @@ public class GameContext : ICoreSystem
     public Player Player { get; private set; }
     public CameraController Camera { get; private set; }
     
+    private List<Vehicle> _vehicles = new ();
+    
     public void Init()
     {
         
@@ -36,16 +38,34 @@ public class GameContext : ICoreSystem
         Camera = Object.Instantiate(_config.CameraPrefab);
         return Camera;
     }
-    
-    public bool TryEnterVehicle(Player player, Vehicle vehicle)
+
+    public void RegisterVehicle(Vehicle vehicle)
     {
-        player.SwitchState(PlayerModeID.Vehicle);
-        return true;
+        if(!_vehicles.Contains(vehicle))
+            _vehicles.Add(vehicle);
     }
 
-    public bool TryExitVehicle(Player player, Vehicle vehicle)
+    public void EnterToVehicle(ulong clientId, ulong vehicleId)
     {
-        player.SwitchState(PlayerModeID.Character);
-        return true;
+        foreach (var vehicle in _vehicles)
+        {
+            if (vehicle.Network.NetworkObjectId.Equals(vehicleId))
+            {
+                Services.Network.EnterToVehicle(clientId, vehicle);
+                break;
+            }
+        }
+    }
+
+    public void ExitToVehicle(ulong vehicleId)
+    {
+        foreach (var vehicle in _vehicles)
+        {
+            if (vehicle.Network.NetworkObjectId.Equals(vehicleId))
+            {
+                Services.Network.ExitToVehicle(vehicle);
+                break;
+            }
+        }
     }
 }

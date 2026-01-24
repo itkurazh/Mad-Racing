@@ -1,4 +1,5 @@
-﻿using Unity.Cinemachine;
+﻿using System.Linq;
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -52,6 +53,9 @@ public class CameraController : MonoBehaviour
     {
         if(_currentState == id) return;;
 
+        if(_currentState == StateID.Vehicle && id == StateID.Character)
+            _rotation = _states.First(state => state.ID == StateID.Vehicle).VirtualCamera.transform.rotation.eulerAngles;
+        
         foreach (var data in _states)
             data.VirtualCamera.gameObject.SetActive(id == data.ID);
         

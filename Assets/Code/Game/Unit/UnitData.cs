@@ -55,6 +55,8 @@ public class UnitData : INetworkSerializable
             OnChangedProperty?.Invoke(Property.VelocityState, _velocityStateID);
         }
     }
+
+    public ModeID Mode;
     
     public enum Property : int
     {
@@ -70,11 +72,18 @@ public class UnitData : INetworkSerializable
         Walking = 1,
         Running = 2,
     }
+    
+    public enum ModeID
+    {
+        Character = 0,
+        Vehicle = 1,
+    }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
     {
         serializer.SerializeValue(ref _position);
         serializer.SerializeValue(ref _direction);
         serializer.SerializeValue(ref _velocityStateID);
+        serializer.SerializeValue(ref Mode);
     }
 }

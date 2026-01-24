@@ -451,6 +451,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: RedCar
       objectReference: {fileID: 0}
+    - target: {fileID: 5991440623071801760, guid: 9aeea50b3bb16894ab795d4fe041d549, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 954297225
+      objectReference: {fileID: 0}
+    - target: {fileID: 5991440623071801760, guid: 9aeea50b3bb16894ab795d4fe041d549, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 3487801215
+      objectReference: {fileID: 0}
     - target: {fileID: 6909528055015259639, guid: 9aeea50b3bb16894ab795d4fe041d549, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.44
@@ -628,6 +636,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2084220985}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &1232820231 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6427653913577893092, guid: 9aeea50b3bb16894ab795d4fe041d549, type: 3}
+  m_PrefabInstance: {fileID: 997105973}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb433af2d2a047d89d9512e9e5f162a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicle
 --- !u!1 &1349765336
 GameObject:
   m_ObjectHideFlags: 0
@@ -756,6 +775,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 732319213}
   m_LocalEulerAnglesHint: {x: 45, y: 45, z: 0}
+--- !u!114 &1427768356 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4274884230340549027, guid: 166da72e05d0a774488ec72041005539, type: 3}
+  m_PrefabInstance: {fileID: 802793977}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb433af2d2a047d89d9512e9e5f162a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Vehicle
 --- !u!1 &1473145683
 GameObject:
   m_ObjectHideFlags: 0
@@ -1088,7 +1118,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3860454891195279609, guid: ce8c81218cb314ac8af722237fc95173, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.59854
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3860454891195279609, guid: ce8c81218cb314ac8af722237fc95173, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1096,7 +1126,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3860454891195279609, guid: ce8c81218cb314ac8af722237fc95173, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.69151
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3860454891195279609, guid: ce8c81218cb314ac8af722237fc95173, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1126,6 +1156,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3860454891195279610, guid: ce8c81218cb314ac8af722237fc95173, type: 3}
+      propertyPath: _vehicles.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3860454891195279610, guid: ce8c81218cb314ac8af722237fc95173, type: 3}
+      propertyPath: '_vehicles.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1232820231}
+    - target: {fileID: 3860454891195279610, guid: ce8c81218cb314ac8af722237fc95173, type: 3}
+      propertyPath: '_vehicles.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1427768356}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

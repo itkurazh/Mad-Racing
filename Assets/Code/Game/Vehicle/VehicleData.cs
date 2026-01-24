@@ -1,8 +1,9 @@
 ﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 using Object = System.Object;
 
-public class VehicleData
+public class VehicleData : INetworkSerializable
 {
     public VehicleController Controller;
     
@@ -50,5 +51,13 @@ public class VehicleData
     {
         Position = 1,
         Rotation = 2,
+    }
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref _position);
+        serializer.SerializeValue(ref _rotation);
+        serializer.SerializeValue(ref CurrentVelocity);
+        serializer.SerializeValue(ref LerpVelocity);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using Object = System.Object;
 
@@ -24,14 +25,16 @@ public class VehicleView : MonoBehaviour
     private Quaternion _rotation;
     private float _massVelocity;
     private float _lerpVelocity;
-
-    public float Output;
     
     public void SetData(VehicleData data)
     {
         _data = data;
         
         _data.OnChangedProperty += OnChangedProperty;
+
+        _position = _data.Position;
+        _rotation = Quaternion.LookRotation(_data.Rotation);
+        _lerpVelocity = 1;
     }
 
     public void Free()
@@ -45,12 +48,24 @@ public class VehicleView : MonoBehaviour
     {
         transform.position = Vector3.Lerp(transform.position, _position, VehicleConstants.LERP_VALUE * Time.deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, _rotation, VehicleConstants.LERP_VALUE * Time.deltaTime);
-        
-        _massDirection = transform.InverseTransformVector(transform.position - _lastPosition).normalized;
-        float distance = Vector3.Distance(transform.position, _lastPosition);
-        _massVelocity = distance / Time.deltaTime;
-        _lastPosition = transform.position;
-        _lerpVelocity = Mathf.Lerp(_lerpVelocity, _massVelocity, VehicleConstants.LERP_VALUE * Time.deltaTime);
+
+        if (_lastPosition == Vector3.zero)
+        {
+            _lastPosition = transform.position;
+        }
+        else
+        {
+            _massDirection = Vector3.Lerp(_massDirection, transform.InverseTransformVector(transform.position - _lastPosition).normalized, VehicleConstants.LERP_VALUE * Time.deltaTime);
+            float distance = Vector3.Distance(transform.position, _lastPosition);
+            _massVelocity = distance / Time.deltaTime;
+            
+            if(_massVelocity > 0.01f)
+                _lerpVelocity = Mathf.Lerp(_lerpVelocity, _massVelocity, VehicleConstants.LERP_VALUE * Time.deltaTime);
+            else
+                _lerpVelocity = 0;
+            
+            _lastPosition = Vector3.zero;
+        }
 
         WheelsControl();
         Suspension();
@@ -73,24 +88,25 @@ public class VehicleView : MonoBehaviour
 
             var sideRotation = Quaternion.Euler(Vector3.back * sideValue);
             _pivotSide.localRotation = Quaternion.Lerp(_pivotSide.localRotation, sideRotation,
-                VehicleConstants.LERP_VALUE * Time.deltaTime);
+                VehicleConstants.LERP_MASS_VALUE * Time.deltaTime);
 
             var sideLerpPos = Mathf.Lerp(0, 0.1f, sideValue / VehicleConstants.VIEW_SIDE_MAX);
-            _pivotSide.localPosition = Vector3.Lerp(_pivotSide.localPosition, Vector3.down * sideLerpPos, VehicleConstants.LERP_VALUE * Time.deltaTime);
+            _pivotSide.localPosition = Vector3.Lerp(_pivotSide.localPosition, Vector3.down * sideLerpPos, VehicleConstants.LERP_MASS_VALUE * Time.deltaTime);
         }
 
         {
-            var forwardValue = Mathf.Clamp(_massVelocity - _lerpVelocity, -VehicleConstants.VIEW_FORWARD_MAX, VehicleConstants.VIEW_FORWARD_MAX);
+            var forwardValue = Mathf.Clamp(_massVelocity - _lerpVelocity, -VehicleConstants.VIEW_FORWARD_MAX,
+                VehicleConstants.VIEW_FORWARD_MAX);
             forwardValue *= VehicleConstants.VIEW_FORWARD_POWER;
 
             var forwardRotation = Quaternion.Euler(Vector3.left * forwardValue);
             _pivotForward.localRotation = Quaternion.Lerp(_pivotForward.localRotation, forwardRotation,
-                VehicleConstants.LERP_VALUE * Time.deltaTime);
+                VehicleConstants.LERP_MASS_VALUE * Time.deltaTime);
         }
         
         {
             var forceRoot = Vector3.forward * (_data.LerpVelocity * -_massDirection.z); 
-            _root.localPosition = Vector3.Lerp(_root.localPosition, forceRoot, VehicleConstants.LERP_VALUE * Time.deltaTime);
+            _root.localPosition = Vector3.Lerp(_root.localPosition, forceRoot, VehicleConstants.LERP_MASS_VALUE * Time.deltaTime);
         }
     }
 
@@ -115,8 +131,6 @@ public class VehicleView : MonoBehaviour
             
             _wheels[i].GetChild(0).Rotate(Vector3.right, _massDirection.z * _massVelocity * VehicleConstants.VIEW_WHEEL_RAD);
         }
-        
-        Output = _massVelocity - _data.CurrentVelocity;
         
         if(Mathf.Abs(_massDirection.x) * _massVelocity > 0.2f && _data.CurrentVelocity > 1)
         {

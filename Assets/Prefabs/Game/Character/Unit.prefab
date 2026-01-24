@@ -1033,9 +1033,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3490925328439414005, guid: 24bdd769f62573b4a8a6872e48599069, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -7451300297585510247}
-    - targetCorrespondingSourceObject: {fileID: 3490925328439414005, guid: 24bdd769f62573b4a8a6872e48599069, type: 3}
-      insertIndex: -1
       addedObject: {fileID: -494095930660950817}
     - targetCorrespondingSourceObject: {fileID: 4590105555827694562, guid: 24bdd769f62573b4a8a6872e48599069, type: 3}
       insertIndex: -1
@@ -1046,31 +1043,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3490925328439414005, guid: 24bdd769f62573b4a8a6872e48599069, type: 3}
   m_PrefabInstance: {fileID: 7295870333097350082}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-7451300297585510247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6139076438011125559}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3074414952
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!114 &-494095930660950817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1083,7 +1055,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5531178e46b415aa44d879c5f41556f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
-  ShowTopMostFoldoutHeaderGroup: 1
   _view: {fileID: 1106668008884392765}
   _controller: {fileID: 840244326087656421}
 --- !u!4 &6523486472967906249 stripped

@@ -8,4 +8,5 @@
     public const float VIEW_WHEEL_RAD = 0.3f;
     
     public const int LERP_VALUE = 15;
+    public const int LERP_MASS_VALUE = 5;
 }
