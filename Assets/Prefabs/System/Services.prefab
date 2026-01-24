@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3827218113981288009}
   - component: {fileID: 3827218113981288015}
   - component: {fileID: 3827218113981288008}
+  - component: {fileID: -6351490112126752858}
   m_Layer: 0
   m_Name: Services
   m_TagString: Untagged
@@ -57,3 +58,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15f48fbde40a483e9c0f140652f5e520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-6351490112126752858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3827218113981288010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 134789295b8541ecb89472fba6855e09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkService

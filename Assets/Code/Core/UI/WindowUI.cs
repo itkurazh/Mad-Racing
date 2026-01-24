@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class BaseCanvasUI : MonoBehaviour
+public abstract class WindowUI : MonoBehaviour
 {
     public uint windowID { get; protected set; }
     

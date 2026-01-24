@@ -7,4 +7,6 @@ public static class Services
     public static ISceneService Scene => SceneService.Instance;
 
     public static IUIController UI => UIService.Instance;
+    
+    public static INetworkService Network => NetworkService.Instance;
 }

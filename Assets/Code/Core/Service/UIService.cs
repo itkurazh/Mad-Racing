@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IUIController
 {
-    T Get<T>() where T : BaseCanvasUI;
+    T Get<T>() where T : WindowUI;
 }
 
 public class UIService : MonoBehaviour, IUIController
@@ -15,16 +15,16 @@ public class UIService : MonoBehaviour, IUIController
     private Canvas _canvasPrefab;
 
     [SerializeField]
-    private BaseCanvasUI[] _content;
+    private WindowUI[] _content;
 
-    private Dictionary<Type, BaseCanvasUI> _screens;
+    private Dictionary<Type, WindowUI> _screens;
 
     private int _currentCanvasOrder;
 
     private void Awake()
     {
         Instance = this;
-        _screens = new Dictionary<Type, BaseCanvasUI>();
+        _screens = new Dictionary<Type, WindowUI>();
         InitScreens();
     }
 
@@ -39,12 +39,12 @@ public class UIService : MonoBehaviour, IUIController
         }
     }
 
-    public T Get<T>() where T : BaseCanvasUI
+    public T Get<T>() where T : WindowUI
     {
         return _screens[typeof(T)] as T;
     }
 
-    private void Register<T>(T screen) where T : BaseCanvasUI
+    private void Register<T>(T screen) where T : WindowUI
     {
         var screenType = screen.GetType();
         Debug.Log($"UI \"{screenType.Name}\" screen registered.");
@@ -58,7 +58,7 @@ public class UIService : MonoBehaviour, IUIController
             screen.SetActive(false);
     }
 
-    private BaseCanvasUI CreateScreen(BaseCanvasUI screenPrefab)
+    private WindowUI CreateScreen(WindowUI screenPrefab)
     {
         var canvas = Instantiate(_canvasPrefab);
         var screen = Instantiate(screenPrefab, canvas.transform);

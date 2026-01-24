@@ -1,11 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class UnitController : MonoBehaviour
 {
     public Vector3 Position => transform.position;
     
-    public void Move(Vector3 position)
+    private CharacterController _characterController;
+
+    private void Awake()
     {
-        transform.position = position;
+        _characterController = GetComponent<CharacterController>();
+    }
+
+    public void Move(Vector3 velocity)
+    {
+        _characterController.Move(velocity);
     }
 }

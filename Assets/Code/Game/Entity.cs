@@ -1,7 +1,8 @@
 ﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 
-public abstract class Entity :  MonoBehaviour
+public abstract class Entity :  NetworkBehaviour
 {
     protected virtual void Awake()
     {
@@ -10,8 +11,8 @@ public abstract class Entity :  MonoBehaviour
 
     protected abstract void Subscribe();
     protected abstract void Unsubscribe();
-    
-    private void OnDestroy()
+
+    public override void OnDestroy()
     {
         Unsubscribe();
     }

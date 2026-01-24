@@ -116,3 +116,4 @@ MonoBehaviour:
   _canvasPrefab: {fileID: 2999043952146280123, guid: a195abc6494ed4a8690bf1625bcbbd46, type: 3}
   _content:
   - {fileID: 2840978011029019604, guid: 7f49df148c992472eab220505aafed0a, type: 3}
+  - {fileID: 5435666155627387364, guid: f99f4d44c2dd94fda961717b205ec3cb, type: 3}

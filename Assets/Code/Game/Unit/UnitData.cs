@@ -1,8 +1,9 @@
 ﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 using Object = System.Object;
 
-public class UnitData
+public class UnitData : INetworkSerializable
 {
     public UnitController Controller;
     
@@ -68,5 +69,12 @@ public class UnitData
         Idle = 0,
         Walking = 1,
         Running = 2,
+    }
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref _position);
+        serializer.SerializeValue(ref _direction);
+        serializer.SerializeValue(ref _velocityStateID);
     }
 }

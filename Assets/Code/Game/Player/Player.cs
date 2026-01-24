@@ -1,23 +1,34 @@
 using System;
+using System.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 
 public sealed class Player : Entity
 {
+    private NetworkObject _network;
+    public NetworkObject Network => GetNetwork();
+
     [SerializeField] private Unit _unit;
     [SerializeField] private Vehicle _vehicle;
-    
-    public CameraController CameraController;
 
     private PlayerModeID _modeID;
     
     private UnitConfig UnitConfig => Configs.Get<UnitConfig>();
-
-    private void Start()
+    
+    private async void Start()
     {
-        SwitchState(PlayerModeID.Character);
+        while (!Network.IsSpawned)
+            await Task.Yield();
         
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        if (Network.IsOwner)
+        {
+            Services.Game.Context.CreateCamera();
+            
+            SwitchState(PlayerModeID.Character);
+            
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 
     protected override void Subscribe()
@@ -32,18 +43,28 @@ public sealed class Player : Entity
 
     private void Update()
     {
-        switch (_modeID)
+        if (!Network.IsOwner)
         {
-            case PlayerModeID.Character: CharacterLocomotion(); break;
-            case PlayerModeID.Vehicle: VehicleLocomotion(); break;
+            _unit.Data.Controller.transform.position = _unit.Data.Position;
+            _unit.View.transform.rotation = Quaternion.LookRotation(_unit.Data.Direction);
         }
-        
-        if(Input.GetKeyDown(KeyCode.E))
+        else
         {
-            if(_modeID == PlayerModeID.Character)
-                Services.Game.Context.TryEnterVehicle(this, _vehicle);
-            else
-                Services.Game.Context.TryExitVehicle(this, _vehicle);
+            switch (_modeID)
+            {
+                case PlayerModeID.Character: CharacterLocomotion(); break;
+                case PlayerModeID.Vehicle: VehicleLocomotion(); break;
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                if (_modeID == PlayerModeID.Character)
+                    Services.Game.Context.TryEnterVehicle(this, _vehicle);
+                else
+                    Services.Game.Context.TryExitVehicle(this, _vehicle);
+            }
+            
+            UpdateDataRpc(_unit.Data);
         }
     }
 
@@ -52,17 +73,17 @@ public sealed class Player : Entity
         switch (modeID)
         {
             case PlayerModeID.Character:
-                CameraController.SetTarget(_unit.Data.Controller.transform);
-                CameraController.ChangeState(CameraController.StateID.Character);
+                Services.Game.Context.Camera.SetTarget(_unit.Data.Controller.transform);
+                Services.Game.Context.Camera.ChangeState(CameraController.StateID.Character);
                 
                 _unit.gameObject.SetActive(true);
-                _unit.Data.Controller.transform.position = _vehicle.Data.Position + -_vehicle.Data.Controller.transform.right;
-                _unit.View.transform.position = _unit.Data.Controller.transform.position;
+                //_unit.Data.Controller.transform.position = _vehicle.Data.Position + -_vehicle.Data.Controller.transform.right;
+                //_unit.View.transform.position = _unit.Data.Controller.transform.position;
                 break;
             
             case PlayerModeID.Vehicle:
-                CameraController.SetTarget(_vehicle.Data.Controller.transform);
-                CameraController.ChangeState(CameraController.StateID.Vehicle);
+                Services.Game.Context.Camera.SetTarget(_vehicle.Data.Controller.transform);
+                Services.Game.Context.Camera.ChangeState(CameraController.StateID.Vehicle);
                 
                 _unit.gameObject.SetActive(false);
                 break;
@@ -80,7 +101,7 @@ public sealed class Player : Entity
 
     private void CharacterLocomotion()
     {
-        var right = Vector3.Cross(CameraController.Direction, Vector3.up);
+        var right = Vector3.Cross(Services.Game.Context.Camera.Direction, Vector3.up);
         var forward = Vector3.Cross(right, Vector3.up);
         var inputDirection = -forward * Input.GetAxisRaw("Vertical") + 
                                     -right * Input.GetAxisRaw("Horizontal");
@@ -102,10 +123,25 @@ public sealed class Player : Entity
             _unit.Data.VelocityState = UnitData.VelocityStateID.Walking;
         }
         
-        var moveDirection = inputDirection.normalized * _unit.Data.Velocity * Time.deltaTime;
-        var position = _unit.Data.Position + moveDirection;
+        var moveDirection = inputDirection.normalized * (_unit.Data.Velocity * Time.deltaTime);
         
-        _unit.Data.Controller.Move(position);
+        _unit.Data.Controller.Move(moveDirection);
         _unit.Data.Direction = Vector3.Lerp(_unit.Data.Direction, moveDirection, UnitConstants.LERP_VALUE * Time.deltaTime);
+    }
+
+    private NetworkObject GetNetwork()
+    {
+        if(!_network)
+            _network = GetComponent<NetworkObject>();
+        
+        return _network;
+    }
+    
+    [Rpc(SendTo.NotOwner)]
+    private void UpdateDataRpc(UnitData data)
+    {
+        _unit.Data.Position = data.Position;
+        _unit.Data.Direction = data.Direction;
+        _unit.Data.VelocityState = data.VelocityState;
     }
 }
