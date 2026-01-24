@@ -879,6 +879,41 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2127172343}
   m_Mesh: {fileID: -3304101737338025319, guid: 857807f872c39564aa75c63a3ef1d10b, type: 3}
+--- !u!1 &2142173093 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8666166620129592843, guid: 107e9e1d66ff4444eb761b13ada33ec2, type: 3}
+  m_PrefabInstance: {fileID: 6778109890243840489}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2142173096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142173093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6960e84d07fb87f47956e7a81d71c4e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Transports.UTP.UnityTransport
+  m_ProtocolType: 0
+  m_UseWebSockets: 0
+  m_UseEncryption: 0
+  m_MaxPacketQueueSize: 128
+  m_MaxPayloadSize: 6144
+  m_HeartbeatTimeoutMS: 500
+  m_ConnectTimeoutMS: 1000
+  m_MaxConnectAttempts: 60
+  m_DisconnectTimeoutMS: 30000
+  ConnectionData:
+    Address: 127.0.0.1
+    Port: 7777
+    ServerListenAddress: 127.0.0.1
+    ClientBindPort: 0
+  DebugSimulator:
+    PacketDelayMS: 0
+    PacketJitterMS: 0
+    PacketDropRate: 0
 --- !u!1001 &2869554861534674027
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1092,7 +1127,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8666166620129592843, guid: 107e9e1d66ff4444eb761b13ada33ec2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2142173096}
   m_SourcePrefab: {fileID: 100100000, guid: 107e9e1d66ff4444eb761b13ada33ec2, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
