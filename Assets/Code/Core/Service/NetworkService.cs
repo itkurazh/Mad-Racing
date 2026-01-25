@@ -72,6 +72,7 @@ public class NetworkService : MonoBehaviour, INetworkService
     
     public void ExitToVehicle(Vehicle vehicle)
     {
+        vehicle.ResetDataRpc();
         vehicle.Network.ChangeOwnership(0);
         vehicle.OwnerId.Value = -1;
     }

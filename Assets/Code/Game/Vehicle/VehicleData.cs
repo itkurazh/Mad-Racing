@@ -15,8 +15,11 @@ public class VehicleData
         get => _position;
         set
         {
-            _position = value;
-            OnChangedProperty?.Invoke(Property.Position, _position);
+            if(Vector3.Distance(_position, value) > 0.01f)
+            {
+                _position = value;
+                OnChangedProperty?.Invoke(Property.Position, value);
+            }
         }
     }
     
@@ -26,8 +29,11 @@ public class VehicleData
         get => _rotation;
         set
         {
-            _rotation = value;
-            OnChangedProperty?.Invoke(Property.Rotation, _rotation);
+            if(_rotation != value)
+            {
+                _rotation = value;
+                OnChangedProperty?.Invoke(Property.Rotation, value);
+            }
         }
     }
     
@@ -37,8 +43,13 @@ public class VehicleData
         get => _currentVelocity;
         set
         {
-            _currentVelocity = value;
-            OnChangedProperty?.Invoke(Property.CurrentVelocity, _currentVelocity);
+            var result = Mathf.Abs(_currentVelocity - value);
+            
+            if(result > 0.01f)
+            {
+                _currentVelocity = value;
+                OnChangedProperty?.Invoke(Property.CurrentVelocity, value);
+            }
         }
     }
     
@@ -48,8 +59,13 @@ public class VehicleData
         get => _inputDirection;
         set
         {
-            _inputDirection = value;
-            OnChangedProperty?.Invoke(Property.InputDirection, _inputDirection);
+            var result = Mathf.Abs(_inputDirection - value);
+            
+            if(result > 0.01f)
+            {
+                _inputDirection = value;
+                OnChangedProperty?.Invoke(Property.InputDirection, value);
+            }
         }
     }
     
@@ -59,8 +75,13 @@ public class VehicleData
         get => _inputSide;
         set
         {
-            _inputSide = value;
-            OnChangedProperty?.Invoke(Property.InputSide, _inputSide);
+            var result = Mathf.Abs(_inputSide - value);
+            
+            if(result > 0.01f)
+            {
+                _inputSide = value;
+                OnChangedProperty?.Invoke(Property.InputSide, value);
+            }
         }
     }
     

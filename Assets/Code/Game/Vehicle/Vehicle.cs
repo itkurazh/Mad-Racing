@@ -98,6 +98,14 @@ public partial class Vehicle : Entity
         }
     }
 
+    [Rpc(SendTo.Everyone)]
+    public void ResetDataRpc()
+    {
+        Data.CurrentVelocity = 0;
+        Data.InputDirection = 0;
+        Data.InputSide = 0;
+    }
+
     [Rpc(SendTo.NotOwner)]
     private void OnChangePositionRpc(Vector3 position) => Data.Position = position;
 

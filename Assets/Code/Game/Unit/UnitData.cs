@@ -14,8 +14,11 @@ public class UnitData
         get => _position;
         set
         {
-            _position = value;
-            OnChangedProperty?.Invoke(Property.Position, _position);
+            if(Vector3.Distance(_position, value) > 0.01f)
+            {
+                _position = value;
+                OnChangedProperty?.Invoke(Property.Position, value);
+            }
         }
     }
     
@@ -25,8 +28,11 @@ public class UnitData
         get => _direction;
         set
         {
-            _direction = value;
-            OnChangedProperty?.Invoke(Property.Direction, _direction);
+            if(_direction != value)
+            {
+                _direction = value;
+                OnChangedProperty?.Invoke(Property.Direction, value);
+            }
         }
     }
 
@@ -36,8 +42,13 @@ public class UnitData
         get => _velocity;
         set
         {
-            _velocity = value;
-            OnChangedProperty?.Invoke(Property.Velocity, _velocity);
+            var result = Mathf.Abs(_velocity - value);
+
+            if (result > 0.01f)
+            {
+                _velocity = value;
+                OnChangedProperty?.Invoke(Property.Velocity, value);
+            }
         }
     }
     
@@ -51,7 +62,7 @@ public class UnitData
                 return;
             
             _velocityStateID = value;
-            OnChangedProperty?.Invoke(Property.VelocityState, _velocityStateID);
+            OnChangedProperty?.Invoke(Property.VelocityState, value);
         }
     }
 
@@ -66,7 +77,7 @@ public class UnitData
                 return;
             
             _modeID = value;
-            OnChangedProperty?.Invoke(Property.Mode, _modeID);
+            OnChangedProperty?.Invoke(Property.Mode, value);
         }
     }
     
