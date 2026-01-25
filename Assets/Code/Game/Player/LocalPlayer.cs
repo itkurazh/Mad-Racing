@@ -38,7 +38,7 @@ public class LocalPlayer
                 {
                     var targetVehicle = _player.Vehicles[0];
                         
-                    //EnterToVehicleRpc(Network.OwnerClientId, targetVehicle.Network.NetworkObjectId);
+                    _player.EnterToVehicleRpc(_player.Network.OwnerClientId, targetVehicle.Network.NetworkObjectId);
                             
                     _player.Vehicle = targetVehicle;
                     SwitchState(UnitData.ModeID.Vehicle);
@@ -51,7 +51,7 @@ public class LocalPlayer
                     
                 _player.Unit.View.transform.position = _player.Unit.Data.Controller.transform.position;
     
-                //ExitToVehicleRpc(_player.Vehicle.Network.NetworkObjectId);
+                _player.ExitToVehicleRpc(_player.Vehicle.Network.NetworkObjectId);
                     
                 _player.Vehicle = null;
                     

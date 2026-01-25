@@ -14,7 +14,7 @@ public interface INetworkService
 public class NetworkService : MonoBehaviour, INetworkService
 {
     public const float THERHOLD_SLEEP_VALUE = 0.1f;
-    public const int NETWORK_RATE = 15;
+    public const int NETWORK_RATE_UPDATE = 15;
     
     public static INetworkService Instance { get; private set; }
 

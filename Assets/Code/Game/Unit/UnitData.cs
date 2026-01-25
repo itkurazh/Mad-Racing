@@ -1,9 +1,8 @@
 ﻿using System;
-using Unity.Netcode;
 using UnityEngine;
 using Object = System.Object;
 
-public class UnitData : INetworkSerializable
+public class UnitData
 {
     public UnitController Controller;
     
@@ -56,14 +55,28 @@ public class UnitData : INetworkSerializable
         }
     }
 
-    public ModeID Mode;
+    private ModeID _modeID;
+
+    public ModeID Mode
+    {
+        get => _modeID;
+        set
+        {
+            if(_modeID == value)
+                return;
+            
+            _modeID = value;
+            OnChangedProperty?.Invoke(Property.Mode, _modeID);
+        }
+    }
     
     public enum Property : int
     {
         Position = 1,
         Direction = 2,
         Velocity = 3,
-        VelocityState = 4
+        VelocityState = 4,
+        Mode = 5
     }
     
     public enum VelocityStateID
@@ -77,13 +90,5 @@ public class UnitData : INetworkSerializable
     {
         Character = 0,
         Vehicle = 1,
-    }
-
-    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-    {
-        serializer.SerializeValue(ref _position);
-        serializer.SerializeValue(ref _direction);
-        serializer.SerializeValue(ref _velocityStateID);
-        serializer.SerializeValue(ref Mode);
     }
 }

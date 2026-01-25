@@ -58,7 +58,7 @@ public class VehicleView : MonoBehaviour
         float distance = Vector3.Distance(_data.Controller.Position, _lastPosition);
         _massVelocity = distance / Time.deltaTime;
         _lastPosition = _data.Controller.Position;
-        _lerpVelocity = Mathf.Lerp(_lerpVelocity,  _massVelocity, VehicleConstants.LERP_VALUE / 2f * Time.deltaTime);
+        _lerpVelocity = Mathf.Lerp(_lerpVelocity,  _massVelocity, VehicleConstants.LERP_VALUE * Time.deltaTime);
     }
 
     private void OnChangedProperty(VehicleData.Property property, Object value)
@@ -95,7 +95,7 @@ public class VehicleView : MonoBehaviour
         }
         
         {
-            var forceRoot = Vector3.forward * (_data.LerpVelocity * -_massDirection.z); 
+            var forceRoot = Vector3.forward * (_data.VelocityClamp * -_massDirection.z); 
             _root.localPosition = Vector3.Lerp(_root.localPosition, forceRoot, VehicleConstants.LERP_VALUE * Time.deltaTime);
         }
     }
@@ -143,7 +143,5 @@ public class VehicleView : MonoBehaviour
             if(_effectsSmoke[0].isPlaying)
                 _effectsSmoke.Stop();
         }
-        
-        //print($"Mass: {_massVelocity} && {_data.CurrentVelocity}");
     }
 }

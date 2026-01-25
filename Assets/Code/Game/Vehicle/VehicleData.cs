@@ -3,7 +3,7 @@ using Unity.Netcode;
 using UnityEngine;
 using Object = System.Object;
 
-public class VehicleData : INetworkSerializable
+public class VehicleData
 {
     public VehicleController Controller;
     
@@ -31,17 +31,47 @@ public class VehicleData : INetworkSerializable
         }
     }
     
+    private float _currentVelocity;
+    public float CurrentVelocity
+    {
+        get => _currentVelocity;
+        set
+        {
+            _currentVelocity = value;
+            OnChangedProperty?.Invoke(Property.CurrentVelocity, _currentVelocity);
+        }
+    }
+    
+    private float _inputDirection;
+    public float InputDirection
+    {
+        get => _inputDirection;
+        set
+        {
+            _inputDirection = value;
+            OnChangedProperty?.Invoke(Property.InputDirection, _inputDirection);
+        }
+    }
+    
+    private float _inputSide;
+    public float InputSide
+    {
+        get => _inputSide;
+        set
+        {
+            _inputSide = value;
+            OnChangedProperty?.Invoke(Property.InputSide, _inputSide);
+        }
+    }
+    
+    
     public Vector3 Direction;
 
     public float DirectionDot;
     public float AccelationTime;
     public float TargetVelocity;
-    public float CurrentVelocity;
     public float AngularVelocity;
-    public float LerpVelocity;
-    
-    public float InputDirection;
-    public float InputSide;
+    public float VelocityClamp;
 
     public float Traction;
     
@@ -51,13 +81,8 @@ public class VehicleData : INetworkSerializable
     {
         Position = 1,
         Rotation = 2,
-    }
-
-    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-    {
-        serializer.SerializeValue(ref _position);
-        serializer.SerializeValue(ref _rotation);
-        serializer.SerializeValue(ref CurrentVelocity);
-        serializer.SerializeValue(ref LerpVelocity);
+        CurrentVelocity = 3,
+        InputDirection = 4,
+        InputSide = 5,
     }
 }

@@ -84,45 +84,25 @@ public class Player : Entity
                 break;
             case UnitData.Property.Direction: OnChangeDirectionRpc((Vector3)value); break;
             case UnitData.Property.VelocityState: OnChangeVelocityStateRpc((UnitData.VelocityStateID)value); break;
+            case UnitData.Property.Mode: OnChangeModeRpc((UnitData.ModeID)value); break;
         }
     }
 
     [Rpc(SendTo.NotOwner)]
-    private void OnChangePositionRpc(Vector3 position)
-    {
-        Unit.Data.Position = position;
-    }
+    private void OnChangePositionRpc(Vector3 position) => Unit.Data.Position = position;
 
     [Rpc(SendTo.NotOwner)]
-    private void OnChangeDirectionRpc(Vector3 direction)
-    {
-        Unit.Data.Direction = direction;
-    }
+    private void OnChangeDirectionRpc(Vector3 direction) => Unit.Data.Direction = direction;
 
     [Rpc(SendTo.NotOwner)]
-    private void OnChangeVelocityStateRpc(UnitData.VelocityStateID state)
-    {
-        Unit.Data.VelocityState = state;
-    }
-
-    [Rpc(SendTo.Server)]
-    private void EnterToVehicleRpc(ulong clientId, ulong vehicleId)
-    {
-        Services.Game.Context.EnterToVehicle(clientId, vehicleId);
-    }
-    
-    [Rpc(SendTo.Server)]
-    private void ExitToVehicleRpc(ulong vehicleId)
-    {
-        Services.Game.Context.ExitToVehicle(vehicleId);
-    }
+    private void OnChangeVelocityStateRpc(UnitData.VelocityStateID state) => Unit.Data.VelocityState = state;
     
     [Rpc(SendTo.NotOwner)]
-    private void UpdateDataRpc(UnitData data)
-    {
-        _unit.Data.Position = data.Position;
-        _unit.Data.Direction = data.Direction;
-        _unit.Data.VelocityState = data.VelocityState;
-        _unit.Data.Mode = data.Mode;
-    }
+    private void OnChangeModeRpc(UnitData.ModeID modeID) => Unit.Data.Mode = modeID;
+
+    [Rpc(SendTo.Server)]
+    public void EnterToVehicleRpc(ulong clientId, ulong vehicleId) =>  Services.Game.Context.EnterToVehicle(clientId, vehicleId);
+    
+    [Rpc(SendTo.Server)]
+    public void ExitToVehicleRpc(ulong vehicleId) => Services.Game.Context.ExitToVehicle(vehicleId);
 }
