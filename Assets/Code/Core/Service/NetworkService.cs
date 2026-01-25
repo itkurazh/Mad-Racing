@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -12,11 +13,14 @@ public interface INetworkService
 
 public class NetworkService : MonoBehaviour, INetworkService
 {
-    public const ulong UNKNOWD_ID = 4004;
+    public const float THERHOLD_SLEEP_VALUE = 0.1f;
+    public const int NETWORK_RATE = 15;
     
     public static INetworkService Instance { get; private set; }
 
     private NetworkManager _network => NetworkManager.Singleton;
+    
+    private List<Player> _players = new ();
     
     private void Awake()
     {
@@ -41,11 +45,11 @@ public class NetworkService : MonoBehaviour, INetworkService
         
         if(result)
         {
+            Debug.Log("Host started");
+            
             _network.OnClientConnectedCallback += OnOnClientConnectedCallback;
             
             SpawnPlayer(_network.LocalClientId);
-            
-            Debug.Log("Host started");
         }
         
         return result;
@@ -54,8 +58,10 @@ public class NetworkService : MonoBehaviour, INetworkService
     public void StopHost()
     {
         _network.OnClientConnectedCallback -= OnOnClientConnectedCallback;
-        
         _network.Shutdown();
+        _players.Clear();
+        
+        Debug.Log("Host stoped");
     }
 
     public void EnterToVehicle(ulong clientId, Vehicle vehicle)
@@ -77,7 +83,8 @@ public class NetworkService : MonoBehaviour, INetworkService
     {
         var player = Services.Game.Context.CreatePlayer();
         player.Network.SpawnAsPlayerObject(clientId);
+        _players.Add(player);
         
-        Debug.Log($"Spawned player id:{clientId}");
+        Debug.Log($"Spawned player ID:[{clientId}]");
     }
 }

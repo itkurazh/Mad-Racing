@@ -321,8 +321,6 @@ Transform:
   - {fileID: 1349765340}
   - {fileID: 468422507}
   - {fileID: 2084220985}
-  - {fileID: 997105974}
-  - {fileID: 802793978}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &802793977
@@ -331,7 +329,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 732319213}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3618936521935221838, guid: 166da72e05d0a774488ec72041005539, type: 3}
       propertyPath: m_Name
@@ -390,11 +388,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 166da72e05d0a774488ec72041005539, type: 3}
---- !u!4 &802793978 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4432525595345946800, guid: 166da72e05d0a774488ec72041005539, type: 3}
-  m_PrefabInstance: {fileID: 802793977}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &895941971 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 71325b59a373941dd8fe20883da6c757, type: 3}
@@ -433,7 +426,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 732319213}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1396096231967548934, guid: 9aeea50b3bb16894ab795d4fe041d549, type: 3}
       propertyPath: GlobalObjectIdHash
@@ -504,11 +497,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9aeea50b3bb16894ab795d4fe041d549, type: 3}
---- !u!4 &997105974 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6909528055015259639, guid: 9aeea50b3bb16894ab795d4fe041d549, type: 3}
-  m_PrefabInstance: {fileID: 997105973}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1077858735
 GameObject:
   m_ObjectHideFlags: 0
@@ -1181,3 +1169,5 @@ SceneRoots:
   - {fileID: 170638519}
   - {fileID: 732319213}
   - {fileID: 650003134}
+  - {fileID: 997105973}
+  - {fileID: 802793977}

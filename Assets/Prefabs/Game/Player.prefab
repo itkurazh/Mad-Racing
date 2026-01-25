@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8547696067519832050}
   - component: {fileID: -19691516315895444}
-  - component: {fileID: 8313560433307873044}
+  - component: {fileID: -3633415769989992121}
   - component: {fileID: 4322456609117586384}
   - component: {fileID: 430733586273682263}
   m_Layer: 10
@@ -61,7 +61,7 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &8313560433307873044
+--- !u!114 &-3633415769989992121
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -75,7 +75,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   ShowTopMostFoldoutHeaderGroup: 1
   _unit: {fileID: 2170903604468684622}
-  _vehicle: {fileID: 0}
 --- !u!135 &4322456609117586384
 SphereCollider:
   m_ObjectHideFlags: 0

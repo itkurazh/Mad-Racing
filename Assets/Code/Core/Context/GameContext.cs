@@ -7,7 +7,6 @@ public class GameContext : ICoreSystem
 {
     private GameConfig _config => Configs.Get<GameConfig>();
     
-    public Player Player { get; private set; }
     public CameraController Camera { get; private set; }
     
     private List<Vehicle> _vehicles = new ();
@@ -29,9 +28,9 @@ public class GameContext : ICoreSystem
 
     public Player CreatePlayer()
     {
-        Player = Object.Instantiate(_config.PlayerPrefab);
-        return Player;
+        return Object.Instantiate(_config.PlayerPrefab);;
     }
+    
 
     public CameraController CreateCamera()
     {
