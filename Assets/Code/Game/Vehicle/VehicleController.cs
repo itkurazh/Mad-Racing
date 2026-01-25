@@ -5,6 +5,8 @@ public class VehicleController : MonoBehaviour
 {
     public Vehicle Vehicle { get; private set; }
     
+    public Vector3 Position => _rigidbody.position;
+    
     private Rigidbody _rigidbody;
 
     private void Awake()
