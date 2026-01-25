@@ -67,11 +67,13 @@ public class NetworkService : MonoBehaviour, INetworkService
     public void EnterToVehicle(ulong clientId, Vehicle vehicle)
     {
         vehicle.Network.ChangeOwnership(clientId);
+        vehicle.OwnerId.Value = (int)clientId;
     }
     
     public void ExitToVehicle(Vehicle vehicle)
     {
         vehicle.Network.ChangeOwnership(0);
+        vehicle.OwnerId.Value = -1;
     }
 
     private void OnOnClientConnectedCallback(ulong clientId)

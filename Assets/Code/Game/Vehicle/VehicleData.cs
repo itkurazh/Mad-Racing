@@ -64,7 +64,6 @@ public class VehicleData
         }
     }
     
-    
     public Vector3 Direction;
 
     public float DirectionDot;
@@ -76,7 +75,7 @@ public class VehicleData
     public float Traction;
     
     public bool IsBrake;
-    
+
     public enum Property : int
     {
         Position = 1,

@@ -37,6 +37,9 @@ public class LocalPlayer
                 if(_player.Vehicles.Count > 0)
                 {
                     var targetVehicle = _player.Vehicles[0];
+                    
+                    if(!targetVehicle.IsFree)
+                        return;
                         
                     _player.EnterToVehicleRpc(_player.Network.OwnerClientId, targetVehicle.Network.NetworkObjectId);
                             
@@ -71,6 +74,7 @@ public class LocalPlayer
                 Services.Game.Context.Camera.ChangeState(CameraController.StateID.Character);
                 
                 _player.Unit.gameObject.SetActive(true);
+                _player.Unit.Data.Controller.gameObject.SetActive(true);
                 break;
             
             case UnitData.ModeID.Vehicle:
@@ -78,6 +82,7 @@ public class LocalPlayer
                 Services.Game.Context.Camera.ChangeState(CameraController.StateID.Vehicle);
                 
                 _player.Unit.gameObject.SetActive(false);
+                _player.Unit.Data.Controller.gameObject.SetActive(false);
                 break;
         }
         

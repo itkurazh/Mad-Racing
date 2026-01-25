@@ -6,17 +6,14 @@ using Object = System.Object;
 public partial class Vehicle : Entity
 {
     public VehicleData Data => _data;
+    public NetworkVariable<int> OwnerId = new NetworkVariable<int>(-1);
+    public bool IsFree => OwnerId.Value < 0;
     
     [SerializeField] private VehicleView _view;
     [SerializeField] private VehicleController _controller;
     private VehicleData _data;
-    
     private LocalVehicle _localVehicle;
     private NetworkVehicle _networkVehicle;
-    
-    public void Move(float direction) => _localVehicle.Move(direction);
-    public void Rotate(float direction) => _localVehicle.Rotate(direction);
-    public void Brake(bool brake) => _localVehicle.Brake(brake);
 
     private bool _isSubscribeProperty;
     
@@ -74,6 +71,10 @@ public partial class Vehicle : Entity
             }
         }
     }
+    
+    public void Move(float direction) => _localVehicle.Move(direction);
+    public void Rotate(float direction) => _localVehicle.Rotate(direction);
+    public void Brake(bool brake) => _localVehicle.Brake(brake);
 
     private void OnChangedProperty(VehicleData.Property property, Object value)
     {

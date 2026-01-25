@@ -119,7 +119,7 @@ public class VehicleView : MonoBehaviour
                 _wheels[i].GetChild(0).Rotate(Vector3.right, _data.InputDirection * wVelocity * VehicleConstants.VIEW_WHEEL_RAD);
             }
             
-            _wheels[i].GetChild(0).Rotate(Vector3.right, _massDirection.z * _massVelocity * VehicleConstants.VIEW_WHEEL_RAD);
+            _wheels[i].GetChild(0).Rotate(Vector3.left, _massDirection.z * _massVelocity * VehicleConstants.VIEW_WHEEL_RAD);
         }
         
         if(Mathf.Abs(_massDirection.x) * _massVelocity > 0.2f && _data.CurrentVelocity > 1)
